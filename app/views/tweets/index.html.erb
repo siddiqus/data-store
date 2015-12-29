@@ -1,0 +1,32 @@
+<table>
+  <thead>
+    <tr>
+      <th> tweetid </th>  
+      <th> Text </th> 
+      <th> Target </th> 
+      <th colspan="2"> Sentence Sentiment </th> 
+      <th colspan="2">Targeted Sentiment </th>
+      <th colspan="3">Entities</th>
+    </tr>  
+  </thead>
+  <tbody>
+    <% @tweets.each do |tw| %>    
+    <tr>
+      <td><%=tw.tweetid%>  </td>     
+      <td><%=tw.text%></td>    
+      <td><%=tw.target%></td>    
+      <td><%=tw.sentiment%></td>    
+      <td><%=tw.confidence%></td>   
+      <td><%=tw.tg_sent ? tw.tg_sent[:type] : ''%></td>   
+      <td><%=tw.tg_sent ? tw.tg_sent[:score] : ''%></td>    
+
+        <%tw.entities.each do |ent|%>
+          <% if ent["type"] == "Drug" -%>
+          <td> <%=ent["type"] %> , <%=ent["relevance"]%>, <%=ent["sentiment"] %>, <%=ent["text"] %> </td>  
+          <% end -%>
+          
+        <% end %>
+    </tr> 
+    <% end -%>
+  </tbody>
+</table>  

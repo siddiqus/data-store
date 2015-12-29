@@ -1,0 +1,47 @@
+<style>
+  .navbar {
+    width:100%;
+    top: 0;
+    height: 3em;
+  }
+
+  .navbar-li {
+     display: inline;
+     padding: 1em;
+   }
+
+   .navbar-container {
+     list-style-type: none;
+     margin: 0 !important;
+     padding: 0 !important;
+   }
+
+   .navbar-header {
+     float: left;
+     padding: 1 em;
+   }
+
+   .pull-right {
+     float: right;
+   }
+</style>
+<div class="navbar light-gray-bg">
+  <ul class="navbar-container">
+    <li class="navbar-header" style="padding: 1em;">
+      Welcome
+    </li>
+    
+    <li class="navbar-header" style="padding: 1em;">
+      <%= link_to 'Home', '/' %>
+    </li>
+
+    <li class="navbar-header" style="padding: 1em;">
+      <%= link_to 'Tweets', '/tweets' %>
+    </li>
+
+    <li class="navbar-header" style="padding: 1em;">
+      <%= link_to 'Search', '/search' %>
+    </li>
+  </ul>
+
+</div>

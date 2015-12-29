@@ -1,0 +1,154 @@
+<script type="text/javascript">
+  var dataEntry = dataEntry || {};
+
+  dataEntry.promoteUser = function() {
+    var username = $(this).data("username");
+    var role = $(this).data("role");
+    var parentTd = $(this).parent();
+    $.post('<%= admin_promote_path %>', {'username': username, 'role': role}, function(data) {
+      parentTd.html(data);
+      parentTd.find('.demote').click(dataEntry.demoteUser);
+    });
+    return false;
+  };
+
+  dataEntry.demoteUser = function() {
+    var username = $(this).data("username");
+    var role = $(this).data("role");
+    var parentTd = $(this).parent();
+
+    if (username == '<%= current_user.username %>') {
+      var response = confirm('You are about to remove admin rights from the currently logged in user'
+      +', this will cause you to immediately lose access to all admin functionality including this page.  '
+      +'You will need to use another admin account to restore admin rights.  Are you sure you want to continue?');
+      if (!response) return;
+    }
+
+    $.post('<%= admin_demote_path %>', {'username': username, 'role': role}, function(data) {
+      parentTd.html(data);
+      parentTd.find('.promote').click(dataEntry.promoteUser);
+    });
+    return false;
+  };
+
+  dataEntry.approveUser = function() {
+    var username = $(this).data("username");
+    var parentTd = $(this).parent();
+    $.post('<%= admin_approve_path %>', {'username': username}, function(data) {
+      parentTd.html(data);
+    });
+  };
+
+  dataEntry.disableUser = function() {
+    var username = $(this).data("username");
+    var parentTd = $(this).parent();
+
+    if (username == '<%= current_user.username %>') {
+      var response = confirm('You are about to disable the currently logged in user'
+      +', this will cause you to immediately lose access and be logged out.  Are you sure you want to continue?');
+      if (!response) return;
+    }
+
+    dataEntry.disableEnableUser(1, username, parentTd)
+  };
+  dataEntry.enableUser = function() {
+    var username = $(this).data("username");
+    var parentTd = $(this).parent();
+    dataEntry.disableEnableUser(0, username, parentTd)
+  };
+  dataEntry.disableEnableUser = function(disabled, username, parentTd) {
+    $.post('<%= admin_disable_path %>', {'username': username, 'disabled': disabled}, function(data) {
+      parentTd.html(data);
+      if (disabled == 1) parentTd.find('.disable').click(dataEntry.enableUser);
+      else parentTd.find('.enable').click(dataEntry.disableUser);
+    });
+  };
+
+  dataEntry.changePractice = function() {
+    var userId = $(this).data("user");
+    var practice = $(this).val();
+    var confs = "Change user's assigned practice?";
+    if ( confirm(confs) == true ){
+      $.post('set_user_practice', {'user': userId, 'practice': practice}, function(d){
+      });
+    };
+  };
+
+  dataEntry.changePracticeProvider = function() {
+    var userId = $(this).data("user");
+    var provider = $(this).val();
+    var confs = "Change user's assigned provider?";
+    if ( confirm(confs) == true ){
+      $.post('set_user_practice_provider', {'user': userId, 'provider': provider}, function(d){
+      });
+    };
+  };
+
+  $(document).ready(function() {
+    $('.promote').click(dataEntry.promoteUser);
+    $('.demote').click(dataEntry.demoteUser);
+    $('.approve').click(dataEntry.approveUser);
+    $('.enable').click(dataEntry.disableUser);
+    $('.disable').click(dataEntry.enableUser);
+
+    $('.practice_select').change(dataEntry.changePractice);
+
+  });
+</script>
+
+<div class='main'>
+
+  <h1>Users</h1>
+  <table id="patientTable" class="table table-hover">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Username</th>
+        <th>Administrator</th>
+        <th>Staff Role</th>
+        <th>Approved</th>
+        <th>Status</th>
+        <th colspan="2"/>
+      </tr>
+    </thead>
+    <% @users.each do |user| -%>
+    <tbody>
+    <tr>
+      <td><%= user.first_name %></td>
+      <td><%= user.last_name %></td>
+      <td><%= user.username %></td>
+
+      <td>
+        <% if user.admin? -%>
+          Yes - <a href="#" class="demote" data-role="admin" data-username="<%= user.username %>">revoke</a>
+        <% else -%>
+          No - <a href="#" class="promote" data-role="admin" data-username="<%= user.username %>">grant</a>
+        <% end %>
+      </td>
+      <td>
+          <% if user.staff_role? -%>
+          Yes - <a href="#" class="demote" data-role="staff_role" data-username="<%= user.username %>">revoke</a>
+          <% else -%>
+          No - <a href="#" class="promote" data-role="staff_role" data-username="<%= user.username %>">grant</a>
+          <% end -%>
+      </td>
+      <td>
+        <% if user.approved? -%>
+        true
+        <% else -%>
+        <a href="#" class="approve" data-username="<%= user.username %>">approve</a>
+        <% end -%>
+      </td>
+      <td>
+        <a href="#" class="<%= (user.disabled?) ? 'disable' : 'enable'%>" data-username="<%= user.username %>"><%= (user.disabled?) ? 'disabled' : 'enabled'%></a>
+      </td>
+      <td>
+        <%= link_to "View Info",{:controller => "admin", :action => "user_profile", :id => user._id}, :class => "btn btn-info"%> &nbsp;
+        <%= link_to "Delete User", {:controller => "admin", :action => "delete_user", :id => user._id}, 'method' => 'delete', 'class' => 'btn btn-danger delete-user-btn', data: {'confirm' => "Are you sure you want to delete this user?"} %>
+      </td>
+    </tr>
+    </tbody>
+    <% end -%>
+  </table>
+</div> <!-- pageContent -->

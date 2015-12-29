@@ -1,0 +1,42 @@
+<script type='text/javascript'>
+  $(document).ready(function() {
+    $('.practice_select').change( function(){
+      var userId = $(this).data("user");
+      var practice = $(this).val();
+      var confs = "Change user's assigned practice?";
+
+      if ( confirm(confs) == true ){
+        $.post('set_user_practice', {'user': userId, 'practice': practice}, function(d){
+        });
+      };
+    });
+
+    $('.practice_provider_select').change( function() {
+      var userId = $(this).data("user");
+      var provider = $(this).val();
+      var confs = "Change user's assigned provider?";
+      if ( confirm(confs) == true ){
+        $.post('set_user_practice_provider', {'user': userId, 'provider': provider}, function(d){
+        });
+      };
+    });
+
+  });
+</script>
+<div class='main' >
+  <h1>User Profile:  <strong><%= @user.full_name%> </strong></h1>
+
+  <table>
+    <thead>
+      <th> Username </td>
+      <th> Email </td>
+    </thead>
+    <tbody>
+  	  <tr>
+  		  <td><%= @user.username %></td>
+  		  <td> <%= @user.email %> </td>
+  	  <tr>
+  </table>
+  <br/>
+  <%= link_to "Back to Users", "/admin/users", :class=>"btn btn-success" %>
+</div>

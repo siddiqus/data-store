@@ -1,0 +1,35 @@
+<br>
+
+<div class="main">
+
+<br/>
+
+<table>
+  <thead>
+    <tr>
+      <th> tweetid </th>  
+      <th> Text </th> 
+      <th> Target </th> 
+      <th> Type </th> 
+      <th> score </th> 
+      <th colspan="2">Targeted Sentiment </th>
+    </tr>  
+  </thead>
+  <tbody>
+    <% @tweets.each do |tw| %>    
+    <tr>
+      <td><%=tw.tweetid%>  </td>     
+      <td><%=tw.text%></td>    
+      <td><%=tw.target%></td>    
+      <td><%=tw.sentiment%></td>    
+      <td><%=tw.confidence%></td>   
+      <td><%=tw.tg_sent ? tw.tg_sent[:type] : ''%></td>   
+      <td><%=tw.tg_sent ? tw.tg_sent[:score] : ''%></td>    
+    </tr> 
+    <% end -%>
+  </tbody>
+
+
+</table>  
+</div>
+

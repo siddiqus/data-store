@@ -1,0 +1,27 @@
+<div class='main'>
+  <br>
+  <div class="search">
+    <%#= form_tag("/results", method: "get") do %>
+      <%#= label_tag(:keyword, "Keyword: ") %>
+      <%#= text_field_tag(:keyword) %>
+      <%#= submit_tag("Search", class: 'btn btn-bold') %>
+    <%# end %>
+
+    <%= form_tag('/search', :method => "get", id: "search-form") do %>
+      <%= text_field_tag :search, params[:search], placeholder: "Search Products" %>
+      <%= submit_tag "Search", class: 'btn btn-bold' %>
+    <% end %>
+  </div>
+
+  <div class="results">
+
+    <% if @drugs.present? %>
+      <%= render :partial => 'drugs/results' %>
+    <% else %>
+      <p>There are no posts containing the term(s) <b><%= params[:search] %> </b>.</p>
+    <% end %>
+  </div>
+
+
+
+</div>

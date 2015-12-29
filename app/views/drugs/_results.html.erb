@@ -1,0 +1,53 @@
+  <% if @drugs && params[:search] %>
+     <br>
+     Showing results for <b><%= params[:search] %></b> ...
+     <br>
+     <br>
+  <% end %>
+  <table id="products" class='display table table-bordered table-hover noselect'>
+    <thead>
+      <tr>
+        <th>Brand name</th>
+        <th>Generic name</th>
+        <th>Company name</th>
+        <th>Product Type</th>
+        <th>Dose</th>
+        <th>Quantity</th>
+        <th>Price(MRP)</th>
+        <th/>
+        <%if @current_user.admin %> <th/><th/> <%end%>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @drugs.each do |drug| %>
+        <tr>
+          <td><%= drug.brand_name %></td>
+          <td><%= drug.generic_name %></td>
+          <td><%= drug.company_name %></td>
+          <td><%= drug.product_type %></td>
+          <td><%= drug.dose %></td>
+          <td><%= drug.quantity %></td>
+          <td><%= drug.price %></td>
+          <td>
+            <%
+              if drug.img
+                img_url = '/images/upload/' + drug.img
+              end
+            %>
+            <img src="<%=img_url%>" height="100px" width="auto"></img>
+
+            <%= form_tag('upload_pic/' + drug._id.to_s, { :method => "put", :multipart => true }) do %>
+              <%= file_field_tag 'picture' %>
+              <%= submit_tag 'Upload' %>
+            <% end %>
+          </td>
+          <%if @current_user.admin %>
+            <td><%= link_to 'Edit', edit_drug_path(drug), class: 'btn' %> </td>
+            <td> <%= link_to 'Delete', 'drugs/' + drug.id.to_s + '/destroy', class: 'btn',  data: { confirm: "Are you sure?" } %></td>
+          <%end%>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>

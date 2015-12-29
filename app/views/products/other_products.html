@@ -1,0 +1,53 @@
+
+<div class='main'>
+<h1>Listing products <%if current_user.admin %> <a href="print_xls">(print)</a> <%end%></h1>
+
+<table id="products" class='display table table-bordered table-hover noselect'>
+  <thead>
+    <tr>
+      <th>Brand name</th>
+      <th>Company name</th>
+      <th>Product Type</th>
+      <th>Category<th>
+      <th>Quantity</th>
+      <th>Price(MRP)</th>
+      <%if @current_user.admin %> <th/><th/> <%end%>
+      <th> Created On </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @products.each do |product| %>
+      <tr>
+        <td><%= product.brand_name %></td>
+        <td><%= product.company_name %></td>
+        <td><%= product.product_type %></td>
+        <td><%= product.category %></td>
+        <td><%= product.quantity %></td>
+        <td><%= product.price %></td>
+        <td>
+          <%
+            if product.img
+              img_url = '/images/upload/' + product.img
+            end
+          %>
+          <img src="<%=img_url%>" height="100px" width="auto"></img>
+
+          <%= form_tag('upload_pic/' + product._id.to_s, { :method => "put", :multipart => true }) do %>
+            <%= file_field_tag 'picture' %>
+            <%= submit_tag 'Upload' %>
+          <% end %>
+        </td>
+        <%if @current_user.admin %>
+          <td><%= link_to 'Edit', edit_product_path(product), class: 'btn' %> </td>
+          <td> <%= link_to 'Delete', 'products/' + product.id.to_s + '/destroy', class: 'btn',  data: { confirm: "Are you sure?" } %></td>
+        <%end%>
+        <td><%= product.create_date %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+</div>
